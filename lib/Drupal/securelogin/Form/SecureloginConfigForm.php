@@ -6,6 +6,7 @@
 namespace Drupal\securelogin\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\system\Form;
+use Drupal\Component\Utility\UrlHelper;
 /**
  * Implements a ChosenConfig form.
  */
@@ -33,25 +34,25 @@ class secureloginConfigForm extends ConfigFormBase {
 
     // securelogin settings
     $securelogin_conf = \Drupal::config('securelogin.settings');
-    $securelogin_base_url = $securelogin_conf->get('securelogin_base_url');
-    $securelogin_secure_forms = $securelogin_conf->get('securelogin_secire_forms');
-    $securelogin_all_forms = $securelogin_conf->get('securelogin_all_forms');
+    $securelogin_base_url = $securelogin_conf->get('base_url');
+    $securelogin_secure_forms = $securelogin_conf->get('secure_forms');
+    $securelogin_all_forms = $securelogin_conf->get('all_forms');
     $user_email_verification = $securelogin_conf->get('user_email_verification');
-    $securelogin_other_forms = $securelogin_conf->get('securelogin_other_forms');
+    $securelogin_other_forms = $securelogin_conf->get('other_forms');
 
-    $form['securelogin_base_url'] = array(
+    $form['base_url'] = array(
       '#type'          => 'textfield',
       '#title'         => t('Secure base URL'),
       '#default_value' => $securelogin_base_url,
       '#description'   => t('The base URL for secure pages. Leave blank to allow Drupal to determine it automatically. It is not allowed to have a trailing slash; Drupal will add it for you. For example: %base_secure_url%. Note that in order for cookies to work, the hostnames in the secure base URL and the insecure base URL must be in the same domain as per the appropriate setting in <code>settings.php</code>, which you may need to modify.', array('%base_secure_url%' => $base_secure_url)),
     );
-    $form['securelogin_secure_forms'] = array(
+    $form['secure_forms'] = array(
       '#type'          => 'checkbox',
       '#title'         => t('Redirect form pages to secure URL'),
       '#default_value' => $securelogin_secure_forms,
       '#description'   => t('If enabled, any pages containing the forms enabled below will be redirected to the secure URL. Users can be assured that they are entering their private data on a secure URL, the contents of which have not been tampered with.'),
     );
-    $form['securelogin_all_forms'] = array(
+    $form['all_forms'] = array(
       '#type'          => 'checkbox',
       '#title'         => t('Submit all forms to secure URL'),
       '#default_value' => $securelogin_all_forms,
@@ -78,13 +79,13 @@ class secureloginConfigForm extends ConfigFormBase {
     $forms['node_form'] = array('group' => 'optional', 'title' => t('Node form'));
     \Drupal::moduleHandler()->alter('securelogin', $forms);
     foreach ($forms as $id => $item) {
-      $form[$item['group']]['securelogin_form_' . $id] = array(
+      $form[$item['group']]['form_' . $id] = array(
         '#type'          => 'checkbox',
         '#title'         => $item['title'],
-        '#default_value' => $securelogin_conf->get('securelogin_form_' . $id),
+        '#default_value' => $securelogin_conf->get('form_' . $id),
       );
     }
-    $form['securelogin_other_forms'] = array(
+    $form['other_forms'] = array(
       '#type' => 'textfield',
       '#title' => t('Other forms to secure'),
       '#default_value' => $securelogin_other_forms,
@@ -103,22 +104,34 @@ class secureloginConfigForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
 
-    krumo($form_state);
-    die();
     \Drupal::config('securelogin.settings')
-      ->set('chosen_minimum_single', $form_state['values']['chosen_minimum_single'])
-      ->set('chosen_minimum_multiple', $form_state['values']['chosen_minimum_multiple'])
-      ->set('chosen_disable_search_threshold', $form_state['values']['chosen_disable_search_threshold'])
-      ->set('chosen_minimum_width', $form_state['values']['chosen_minimum_width'])
-      ->set('chosen_jquery_selector', $form_state['values']['chosen_jquery_selector'])
-      ->set('chosen_search_contains', $form_state['values']['chosen_search_contains'])
-      ->set('chosen_disable_search', $form_state['values']['chosen_disable_search'])
-      ->set('chosen_use_theme', $form_state['values']['chosen_use_theme'])
-      ->set('chosen_placeholder_text_multiple', $form_state['values']['chosen_placeholder_text_multiple'])
-      ->set('chosen_placeholder_text_single', $form_state['values']['chosen_placeholder_text_single'])
-      ->set('chosen_no_results_text', $form_state['values']['chosen_no_results_text'])
+      ->set('base_url', $form_state['values']['base_url'])
+      ->set('secure_forms', $form_state['values']['secure_forms'])
+      ->set('all_forms', $form_state['values']['all_forms'])
+      ->set('user_email_verification', $form_state['values']['user_email_verification'])
+      ->set('other_forms', $form_state['values']['other_forms'])
+      ->set('form_user_login', $form_state['values']['form_user_login'])
+      ->set('form_user_login_block', $form_state['values']['form_user_login_block'])
+      ->set('form_user_pass_reset', $form_state['values']['form_user_pass_reset'])
+      ->set('form_user_profile_form', $form_state['values']['form_user_profile_form'])
+      ->set('form_user_register_form', $form_state['values']['form_user_register_form'])
+      ->set('form_user_pass', $form_state['values']['form_user_pass'])
+      ->set('form_node_form', $form_state['values']['form_node_form'])
       ->save();
-
   }
 
+  /**
+   * Securelogin condiguration form validation.
+   */
+  public function validateForm(array &$form, array &$form_state) {
+    if (empty($form_state['values']['base_url'])) {
+      $form_state['values']['base_url'] = NULL;
+    }
+    elseif (!UrlHelper::isValid($form_state['values']['securelogin_base_url'], TRUE)) {
+      $this->setFormError('base_url', t('The secure base URL must be a valid URL.'));
+    }
+    elseif (strtolower(parse_url($form_state['values']['securelogin_base_url'], PHP_URL_SCHEME)) !== 'https') {
+      $this->setFormError('base_url', t('The secure base URL must start with <em>https://</em>.'));
+    }
+  }
 }
