@@ -1,0 +1,7 @@
+name: Secure Login
+description: Enables secure login.
+type: module
+core: 8.x
+version: VERSION
+configure: securelogin.admin
+

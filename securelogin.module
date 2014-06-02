@@ -4,16 +4,21 @@
  * Implements hook_form_alter().
  */
 function securelogin_form_alter(&$form, &$form_state, $form_id) {
+  // securelogin settings
+  $securelogin_conf = \Drupal::config('securelogin.settings');
+  $securelogin_all_forms = $securelogin_conf->get('securelogin_all_forms');
+  $securelogin_other_forms = $securelogin_conf->get('securelogin_other_forms');
+
   if (isset($form_state['build_info']['base_form_id'])) {
     $form_id = $form_state['build_info']['base_form_id'];
   }
-  if (variable_get('securelogin_all_forms', FALSE)) {
+  if ($securelogin_all_forms) {
     $form['#https'] = TRUE;
   }
-  elseif (variable_get('securelogin_form_' . $form_id, FALSE)) {
+  elseif ($securelogin_conf->get('securelogin_form_' . $form_id)) {
     $form['#https'] = TRUE;
   }
-  elseif ($forms = explode(' ', variable_get('securelogin_other_forms', ''))) {
+  elseif ($forms = explode(' ', $securelogin_other_forms)) {
     if (in_array($form_id, $forms)) {
       $form['#https'] = TRUE;
     }
@@ -34,21 +39,6 @@ function securelogin_help($path, $arg) {
     case 'admin/config/people/securelogin':
       return t('Secure Login allows user login and other forms to be submitted to a configurable secure (HTTPS) URL from the insecure (HTTP) site. By securing the user login forms, a site can enforce secure authenticated sessions, which are immune to <a href="http://en.wikipedia.org/wiki/Session_hijacking">session sidejacking</a>.');
   }
-}
-
-/**
- * Implements hook_menu().
- */
-function securelogin_menu() {
-  $items['admin/config/people/securelogin'] = array(
-    'title' => 'Secure login',
-    'description' => 'Configure secure login settings.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('securelogin_admin'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'securelogin.admin.inc',
-  );
-  return $items;
 }
 
 /**

@@ -1,0 +1,9 @@
+securelogin_base_url: NULL
+securelogin_secure_forms: TRUE
+securelogin_all_forms: FALSE
+user_email_verification: TRUE
+securelogin_other_forms: ''
+securelogin_form_user_login: 1
+securelogin_form_user_login_block: 1
+securelogin_form_user_profile_form: 1
+securelogin_form_user_register_form: 1
