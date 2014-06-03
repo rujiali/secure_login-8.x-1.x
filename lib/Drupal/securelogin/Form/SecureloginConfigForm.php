@@ -68,7 +68,7 @@ class secureloginConfigForm extends ConfigFormBase {
       '#title'         => t('Optional forms'),
       '#description'   => t('Other forms accessible to anonymous users may optionally be secured. If enabled, the following forms will be submitted to the secure URL.'),
     );
-    $forms['user_login'] = array('group' => 'required', 'title' => t('User login form'));
+    $forms['user_login_form'] = array('group' => 'required', 'title' => t('User login form'));
     $forms['user_login_block'] = array('group' => 'required', 'title' => t('User login block form'));
     $forms['user_pass_reset'] = array('group' => 'required', 'title' => t('User password reset form'));
     $forms['user_profile_form'] = array('group' => 'required', 'title' => t('User edit form'));
@@ -110,7 +110,7 @@ class secureloginConfigForm extends ConfigFormBase {
       ->set('all_forms', $form_state['values']['all_forms'])
       ->set('user_email_verification', $form_state['values']['user_email_verification'])
       ->set('other_forms', $form_state['values']['other_forms'])
-      ->set('form_user_login', $form_state['values']['form_user_login'])
+      ->set('form_user_login_form', $form_state['values']['form_user_login_form'])
       ->set('form_user_login_block', $form_state['values']['form_user_login_block'])
       ->set('form_user_pass_reset', $form_state['values']['form_user_pass_reset'])
       ->set('form_user_profile_form', $form_state['values']['form_user_profile_form'])
@@ -118,6 +118,8 @@ class secureloginConfigForm extends ConfigFormBase {
       ->set('form_user_pass', $form_state['values']['form_user_pass'])
       ->set('form_node_form', $form_state['values']['form_node_form'])
       ->save();
+
+    drupal_flush_all_caches();
   }
 
   /**
@@ -127,11 +129,11 @@ class secureloginConfigForm extends ConfigFormBase {
     if (empty($form_state['values']['base_url'])) {
       $form_state['values']['base_url'] = NULL;
     }
-    elseif (!UrlHelper::isValid($form_state['values']['securelogin_base_url'], TRUE)) {
-      $this->setFormError('base_url', t('The secure base URL must be a valid URL.'));
+    elseif (!UrlHelper::isValid($form_state['values']['base_url'], TRUE)) {
+      $this->setFormError('base_url', $form_state, t('The secure base URL must be a valid URL.'));
     }
-    elseif (strtolower(parse_url($form_state['values']['securelogin_base_url'], PHP_URL_SCHEME)) !== 'https') {
-      $this->setFormError('base_url', t('The secure base URL must start with <em>https://</em>.'));
+    elseif (strtolower(parse_url($form_state['values']['base_url'], PHP_URL_SCHEME)) !== 'https') {
+      $this->setFormError('base_url', $form_state, t('The secure base URL must start with <em>https://</em>.'));
     }
   }
 }

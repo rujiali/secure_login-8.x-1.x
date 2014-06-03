@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implements hook_form_alter().
  */
@@ -14,18 +13,19 @@ function securelogin_form_alter(&$form, &$form_state, $form_id) {
     $form_id = $form_state['build_info']['base_form_id'];
   }
   if ($securelogin_all_forms) {
-    $form['#https'] = TRUE;
+    global $base_root;
+    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
   }
   elseif ($securelogin_conf->get('form_' . $form_id)) {
-    $form['#https'] = TRUE;
+    global $base_root;
+    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
   }
   elseif ($forms = explode(' ', $securelogin_other_forms)) {
-    if (in_array($form_id, $forms)) {
-      $form['#https'] = TRUE;
-    }
+    global $base_root;
+    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
   }
   // Other modules may use #https to indicate that a form should be secured.
-  if (!empty($form['#https'])) {
+  if (strpos($form['#action'], 'https')) {
     \Drupal::service('securelogin.API')->securelogin_secure_form($form);
   }
 }

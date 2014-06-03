@@ -3,7 +3,7 @@ secure_forms: TRUE
 all_forms: FALSE
 user_email_verification: TRUE
 other_forms: ''
-form_user_login: 1
+form_user_login_form: 1
 form_user_login_block: 1
 form_user_profile_form: 1
 form_user_register_form: 1
