@@ -7,8 +7,8 @@
 
 namespace Drupal\securelogin;
 use Drupal\Component\Utility\UrlHelper;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Defines the securelogin API service.
@@ -18,6 +18,10 @@ class secureloginAPI {
   protected $response;
   protected $request;
 
+  public function __construct(Request $request, RedirectResponse $response) {
+    $this->request  = $request;
+    $this->response = $response;
+  }
   /**
    * Secures a form by altering its action to use the secure base URL.
    */
@@ -59,8 +63,6 @@ class secureloginAPI {
     $options['absolute'] = TRUE;
     $url = url($path, $options);
     $status = "$http_response_code Moved Permanently";
-    $this->response = Response::create();
-    $this->request = Request::createFromGlobals();
     $this->response->headers->set('Status', $status);
     $this->response->headers->set('Location', $url);
     // Drupal page cache requires a non-empty page body for some reason.
@@ -68,10 +70,10 @@ class secureloginAPI {
     // Mimic drupal_exit() and drupal_page_footer() and then exit.
     //module_invoke_all('exit', $url);
     \Drupal::ModuleHandler()->invokeAll('exit', $url);
+    //drupal_session_commit();
     $session_manager = \Drupal::service('session_manager');
     $session_manager->save();
-    //drupal_session_commit();
-    if (\Drupal::config('system.performance')->get('cahee.page.user_internal') && ($cache = drupal_page_set_cache($this->response, $this->request))) {
+    if (\Drupal::config('system.performance')->get('cache.page.user_internal') && ($cache = drupal_page_set_cache($this->response, $this->request))) {
       foreach ($cache->data['headers'] as $name => $value) {
         $this->response->headers->set($name, $value);
       }

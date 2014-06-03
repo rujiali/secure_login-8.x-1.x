@@ -25,7 +25,7 @@ function securelogin_form_alter(&$form, &$form_state, $form_id) {
     $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
   }
   // Other modules may use #https to indicate that a form should be secured.
-  if (strpos($form['#action'], 'https')) {
+  if (strpos($form['#action'], 'https') === 0) {
     \Drupal::service('securelogin.API')->securelogin_secure_form($form);
   }
 }

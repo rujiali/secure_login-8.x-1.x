@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * Contains \Drupal\securelogin\secureloginOutboundPathProcessor.php.
+ * Contains \Drupal\securelogin\SecureloginOutboundPathProcessor\secureloginOutboundPathProcessor.php.
  */
-namespace Drupal\securelogin;
+namespace Drupal\securelogin\SecureloginOutboundPathProcessor;
 use Drupal\Core\PathProcessor\OutboundPathProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
