@@ -3,3 +3,5 @@ services:
     class: Drupal\securelogin\PathProcessorSecurelogin
     tags:
       - {name: path_processor_outbound}
+  securelogin.API:
+    class: Drupal\securelogin\secureloginAPI
