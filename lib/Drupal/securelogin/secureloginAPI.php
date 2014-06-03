@@ -71,12 +71,14 @@ class secureloginAPI {
     $session_manager = \Drupal::service('session_manager');
     $session_manager->save();
     //drupal_session_commit();
-    //if (variable_get('cache', 0) && ($cache = drupal_page_set_cache($this->request, $this->response))) {
-    //  $this->response->headers->set(cache);
-    //}
-    //else {
-    //  ob_flush();
-    //}
+    if (variable_get('cache', 0) && ($cache = drupal_page_set_cache($this->request, $this->response))) {
+      foreach ($cache->data['headers'] as $name => $value) {
+        $this->response->headers->set($name, $value);
+      }
+    }
+    else {
+      ob_flush();
+    }
     exit;
   }
 }
