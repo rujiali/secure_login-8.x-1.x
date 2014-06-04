@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\securelogin\Form\secureloginConfigForm.
+ * Contains \Drupal\securelogin\Form\SecureloginConfigForm.
  */
 
 namespace Drupal\securelogin\Form;
@@ -13,7 +13,7 @@ use Drupal\Component\Utility\UrlHelper;
 /**
  * Implements a ChosenConfig form.
  */
-class secureloginConfigForm extends ConfigFormBase {
+class SecureloginConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}.
