@@ -29,32 +29,16 @@ class SecureloginManager {
     $securelogin = $this->config->get('securelogin.settings');
     // @TODO does this take in to account forms with external action?
     // Should those forms be allowed to be altered?
+    // @TODO do we need to check if !$this->request->isSecure()
     if ($base_url = $securelogin->get('base_url')) {
       $form['#action'] = str_replace('http://', 'https://', $base_url) . $form['#action'];
     }
     else {
       $form['#action'] = str_replace('http://', 'https://', $this->request->getSchemeAndHttpHost()) . $form['#action'];
     }
-  }
 
-  /**
-   * Secures a form by altering its action to use the secure base URL.
-   */
-  public function securelogin_secure_form(&$form) {
-    global $base_path, $base_secure_url, $is_https;
-    // Flag form as secure for theming purposes.
+    // Add in the https flag for theming purposes.
     $form['#https'] = TRUE;
-    if (!$is_https) {
-      // Redirect to secure page, if enabled.
-      if (\Drupal::config('securelogin.settings')->get('secure_forms')) {
-        $this->securelogin_secure_redirect();
-      }
-      // Set the form action to use secure base URL in place of base path.
-      if (strpos($form['#action'], $base_path) === 0) {
-        $base_url = \Drupal::config('securelogin')->get('base_url');
-        $form['#action'] = substr_replace($form['#action'], $base_url, 0, strlen($base_path) - 1);
-      }
-    }
   }
 
   /**
