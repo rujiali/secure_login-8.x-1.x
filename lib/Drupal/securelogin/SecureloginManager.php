@@ -27,11 +27,13 @@ class SecureloginManager {
 
   public function secureAction(&$form) {
     $securelogin = $this->config->get('securelogin.settings');
+    // @TODO does this take in to account forms with external action?
+    // Should those forms be allowed to be altered?
     if ($base_url = $securelogin->get('base_url')) {
-      $form['#action'] = str_replace('http://', 'https://', $base_url);
+      $form['#action'] = str_replace('http://', 'https://', $base_url) . $form['#action'];
     }
     else {
-      $form['#action'] = str_replace('http://', 'https://', $this->request->getSchemeAndHttpHost());
+      $form['#action'] = str_replace('http://', 'https://', $this->request->getSchemeAndHttpHost()) . $form['#action'];
     }
   }
 
