@@ -1,9 +1,12 @@
 <?php
+
 /**
  * @file
  * Contains \Drupal\securelogin\Form\secureloginConfigForm.
  */
+
 namespace Drupal\securelogin\Form;
+
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\system\Form;
 use Drupal\Component\Utility\UrlHelper;

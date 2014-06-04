@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\securelogin\Tests\SecureLoginTest.
+ * Definition of Drupal\securelogin\Tests\SecureloginTest.
  */
 
 namespace Drupal\securelogin\Tests;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Tests the functionality of the Secure Login module.
  */
-class SecureLoginTest extends WebTestBase {
+class SecureloginTest extends WebTestBase {
 
   protected $request;
 

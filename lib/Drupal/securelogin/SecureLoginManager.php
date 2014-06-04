@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\securelogin\SecureLoginManager.
+ * Contains Drupal\securelogin\SecureloginManager.
  */
 
 namespace Drupal\securelogin;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Defines the securelogin service.
  */
-class SecureLoginManager {
+class SecureloginManager {
 
   protected $request;
 
