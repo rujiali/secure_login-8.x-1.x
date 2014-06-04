@@ -6,7 +6,9 @@
  */
 
 namespace Drupal\securelogin;
+
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Config\ConfigFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -16,10 +18,23 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class SecureloginManager {
 
   protected $request;
+  protected $config;
 
-  public function __construct(Request $request) {
-    $this->request  = $request;
+  public function __construct(Request $request, ConfigFactory $config) {
+    $this->request = $request;
+    $this->config = $config;
   }
+
+  public function secureAction(&$form) {
+    $securelogin = $this->config->get('securelogin.settings');
+    if ($base_url = $securelogin->get('base_url')) {
+      $form['#action'] = str_replace('http://', 'https://', $base_url);
+    }
+    else {
+      $form['#action'] = str_replace('http://', 'https://', $this->request->getSchemeAndHttpHost());
+    }
+  }
+
   /**
    * Secures a form by altering its action to use the secure base URL.
    */

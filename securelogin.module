@@ -4,29 +4,29 @@
  * Implements hook_form_alter().
  */
 function securelogin_form_alter(&$form, &$form_state, $form_id) {
-  // securelogin settings
+
+  // Load Securelogin configuration
   $securelogin_conf = \Drupal::config('securelogin.settings');
-  $securelogin_all_forms = $securelogin_conf->get('all_forms');
   $securelogin_other_forms = $securelogin_conf->get('other_forms');
 
+  // Changing the form id to the base form allows us to match all node forms
+  // since the form id will be 'node_form'
   if (isset($form_state['build_info']['base_form_id'])) {
     $form_id = $form_state['build_info']['base_form_id'];
   }
-  if ($securelogin_all_forms) {
-    global $base_root;
-    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
+  if ($securelogin_conf->get('all_forms')) {
+    $form['#securelogin'] = TRUE;
   }
   elseif ($securelogin_conf->get('form_' . $form_id)) {
-    global $base_root;
-    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
+    $form['#securelogin'] = TRUE;
   }
-  elseif ($forms = explode(' ', $securelogin_other_forms)) {
-    global $base_root;
-    $form['#action'] = str_replace('http://', 'https://', $base_root) . $form['#action'];
+  elseif (!empty($securelogin_other_forms) && in_array($form_id, explode(' ', $securelogin_other_forms))) {
+    $form['#securelogin'] = TRUE;
   }
-  // Other modules may use #https to indicate that a form should be secured.
-  if (strpos($form['#action'], 'https') === 0) {
-    \Drupal::service('securelogin.API')->securelogin_secure_form($form);
+  if ($form['#securelogin']) {
+    \Drupal::service('securelogin.manager')->secureAction($form);
+
+    //\Drupal::service('securelogin.manager')->securelogin_secure_form($form);
   }
 }
 
