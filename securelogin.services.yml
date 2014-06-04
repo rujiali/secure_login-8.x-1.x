@@ -4,5 +4,5 @@ services:
     tags:
       - {name: path_processor_outbound}
   securelogin.API:
-    class: Drupal\securelogin\secureloginAPI
-    arguments: ['@request', '@response']
+    class: Drupal\securelogin\SecureLoginManager
+    arguments: ['@request']

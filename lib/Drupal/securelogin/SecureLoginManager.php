@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\securelogin\secureloginAPI.
+ * Contains Drupal\securelogin\SecureLoginManager.
  */
 
 namespace Drupal\securelogin;
@@ -11,16 +11,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Defines the securelogin API service.
+ * Defines the securelogin service.
  */
-class secureloginAPI {
+class SecureLoginManager {
 
-  protected $response;
   protected $request;
 
-  public function __construct(Request $request, RedirectResponse $response) {
+  public function __construct(Request $request) {
     $this->request  = $request;
-    $this->response = $response;
   }
   /**
    * Secures a form by altering its action to use the secure base URL.
