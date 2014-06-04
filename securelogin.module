@@ -9,6 +9,7 @@ function securelogin_form_alter(&$form, &$form_state, $form_id) {
   $securelogin_conf = \Drupal::config('securelogin.settings');
   $securelogin_other_forms = $securelogin_conf->get('other_forms');
 
+  $form['#securelogin'] = FALSE;
   // Changing the form id to the base form allows us to match all node forms
   // since the form id will be 'node_form'
   if (isset($form_state['build_info']['base_form_id'])) {
@@ -25,9 +26,9 @@ function securelogin_form_alter(&$form, &$form_state, $form_id) {
   }
   if ($form['#securelogin']) {
     \Drupal::service('securelogin.manager')->secureAction($form);
-
-    //\Drupal::service('securelogin.manager')->securelogin_secure_form($form);
+    \Drupal::service('securelogin.manager')->redirect();
   }
+
 }
 
 /**
