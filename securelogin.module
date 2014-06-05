@@ -25,7 +25,6 @@ function securelogin_form_alter(&$form, &$form_state, $form_id) {
     $form['#securelogin'] = TRUE;
   }
   if ($form['#securelogin']) {
-    \Drupal::service('securelogin.manager')->secureAction($form);
     \Drupal::service('securelogin.manager')->redirect();
   }
 

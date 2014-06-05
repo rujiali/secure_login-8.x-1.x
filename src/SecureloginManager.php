@@ -18,34 +18,10 @@ use Symfony\Component\HttpFoundation\Response;
 class SecureloginManager {
 
   protected $request;
-  protected $config;
   protected $response;
 
-  public function __construct(Request $request, ConfigFactory $config) {
+  public function __construct(Request $request) {
     $this->request = $request;
-    $this->config = $config;
-  }
-
-  /**
-   * Alters the action of a form such that it will POST to a secure address.
-   *
-   * @TODO is this method needed anymore?
-   * @param $form
-   */
-  public function secureAction(&$form) {
-    $securelogin = $this->config->get('securelogin.settings');
-    // @TODO does this take in to account forms with external action?
-    // Should those forms be allowed to be altered?
-    // @TODO do we need to check if !$this->request->isSecure()
-    if ($base_url = $securelogin->get('base_url')) {
-      $form['#action'] = str_replace('http://', 'https://', $base_url) . $form['#action'];
-    }
-    else {
-      $form['#action'] = str_replace('http://', 'https://', $this->request->getSchemeAndHttpHost()) . $form['#action'];
-    }
-
-    // Add in the https flag for theming purposes.
-    $form['#https'] = TRUE;
   }
 
   /**

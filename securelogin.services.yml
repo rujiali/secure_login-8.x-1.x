@@ -1,8 +1,4 @@
 services:
-  path_processor_securelogin:
-    class: Drupal\securelogin\PathProcessorSecurelogin
-    tags:
-      - {name: path_processor_outbound}
   securelogin.manager:
     class: Drupal\securelogin\SecureloginManager
     arguments: ['@request', '@config.factory']
