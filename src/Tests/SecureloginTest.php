@@ -18,11 +18,18 @@ class SecureloginTest extends WebTestBase {
   protected $request;
 
   /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = array('securelogin');
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
     return array(
-      'name' => 'Secure login test',
+      'name' => 'Secure login',
       'description' => 'Test to redirect the user to HTTPS if on a login form.',
       'group' => 'Secure Login',
     );
@@ -31,7 +38,7 @@ class SecureloginTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  public function setUp() {
     parent::setUp();
 
     // Ensure that Secure Login expects us to be redirected.
