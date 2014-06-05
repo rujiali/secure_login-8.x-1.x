@@ -62,7 +62,8 @@ class SecureloginTest extends WebTestBase {
     $url = $base_url . '/core/modules/system/tests/http.php/user/login';
     $this->drupalGet($url);
     $this->assertResponse(301);
-    // @TODO ensure the user ends up on the login page
+
+    $this->assertEqual($this->drupalGetHeader('location'), str_replace('http://', 'https://', $base_url) . '/index.php/user/login');
   }
 
   /**
@@ -75,6 +76,8 @@ class SecureloginTest extends WebTestBase {
     $url = $base_url . '/core/modules/system/tests/https.php/user/login';
     $this->drupalGet($url);
     $this->assertResponse(200);
-    // @TODO ensure the user ends up on the login page
+
+    $xpath = $this->xpath('//form[@id="user-login-form"]');
+    $this->assertEqual(count($xpath), 1, 'The user is on the login form.');
   }
 }
