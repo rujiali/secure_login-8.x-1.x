@@ -59,11 +59,10 @@ class SecureloginTest extends WebTestBase {
     global $base_url;
 
     $this->request->server->set('HTTPS', 'off');
-    $url = $base_url . '/core/modules/system/tests/http.php/user/login';
-    $this->drupalGet($url);
+    $this->drupalGet('user', array('https' => FALSE));
     $this->assertResponse(301);
 
-    $this->assertEqual($this->drupalGetHeader('location'), str_replace('http://', 'https://', $base_url) . '/index.php/user/login');
+    $this->assertEqual($this->drupalGetHeader('location'), str_replace('http://', 'https://', $base_url) . '/user');
   }
 
   /**
