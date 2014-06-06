@@ -8,10 +8,10 @@
 namespace Drupal\securelogin\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\system\Form;
 use Drupal\Component\Utility\UrlHelper;
+
 /**
- * Implements a ChosenConfig form.
+ * Implements a Securelogin Config form.
  */
 class SecureloginConfigForm extends ConfigFormBase {
 
@@ -23,10 +23,7 @@ class SecureloginConfigForm extends ConfigFormBase {
   }
 
   /**
-   * securelogin configuration form.
-   *
-   * @return
-   *   the form array
+   * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
     global $base_secure_url;
@@ -35,8 +32,7 @@ class SecureloginConfigForm extends ConfigFormBase {
       drupal_set_message(t('Secure Login module expects the Drupal <code>$conf[\'https\']</code> setting to be at its default value: <code>FALSE</code>. Because it is currently enabled, secure logins cannot be fully implemented because Drupal sets insecure session cookies during login to the secure site.'), 'warning');
     }
 
-    // securelogin settings
-    $securelogin_conf = \Drupal::config('securelogin.settings');
+    $securelogin_conf = $this->config('securelogin.settings');
     $securelogin_base_url = $securelogin_conf->get('base_url');
     $securelogin_secure_forms = $securelogin_conf->get('secure_forms');
     $securelogin_all_forms = $securelogin_conf->get('all_forms');
@@ -85,7 +81,8 @@ class SecureloginConfigForm extends ConfigFormBase {
     $forms['user_login_block'] = array('group' => 'required', 'title' => t('User login block form'));
     $forms['user_pass_reset'] = array('group' => 'required', 'title' => t('User password reset form'));
     $forms['user_profile_form'] = array('group' => 'required', 'title' => t('User edit form'));
-    // Registration form is also a login form if e-mail verification is disabled.
+
+    // The registration form is also a login form if e-mail verification is disabled.
     $register = $user_email_verification ? 'optional' : 'required';
     $forms['user_register_form'] = array('group' => $register, 'title' => t('User registration form'));
     $forms['user_pass'] = array('group' => 'optional', 'title' => t('User password request form'));
@@ -109,20 +106,16 @@ class SecureloginConfigForm extends ConfigFormBase {
         ),
       ),
     );
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('submit'),
-    );
 
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
-   * Securelogin configuration form submit handler.
+   * {@inheritdoc}.
    */
   public function submitForm(array &$form, array &$form_state) {
 
-    \Drupal::config('securelogin.settings')
+    $this->config('securelogin.settings')
       ->set('base_url', $form_state['values']['base_url'])
       ->set('secure_forms', $form_state['values']['secure_forms'])
       ->set('all_forms', $form_state['values']['all_forms'])
@@ -138,10 +131,12 @@ class SecureloginConfigForm extends ConfigFormBase {
       ->save();
 
     drupal_flush_all_caches();
+
+    parent::submitForm($form, $form_state);
   }
 
   /**
-   * Securelogin condiguration form validation.
+   * {@inheritdoc}.
    */
   public function validateForm(array &$form, array &$form_state) {
     if (empty($form_state['values']['base_url'])) {
@@ -153,5 +148,7 @@ class SecureloginConfigForm extends ConfigFormBase {
     elseif (strtolower(parse_url($form_state['values']['base_url'], PHP_URL_SCHEME)) !== 'https') {
       $this->setFormError('base_url', $form_state, t('The secure base URL must start with <em>https://</em>.'));
     }
+
+    parent::validateForm($form, $form_state);
   }
 }
