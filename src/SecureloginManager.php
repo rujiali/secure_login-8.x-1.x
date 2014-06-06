@@ -10,7 +10,6 @@ namespace Drupal\securelogin;
 use Drupal\Core\Config\ConfigFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Defines the securelogin service.
@@ -18,10 +17,12 @@ use Symfony\Component\HttpFoundation\Response;
 class SecureloginManager {
 
   protected $request;
+  protected $config;
   protected $response;
 
-  public function __construct(Request $request) {
+  public function __construct(Request $request, ConfigFactory $config) {
     $this->request = $request;
+    $this->config = $config;
   }
 
   /**
@@ -35,14 +36,10 @@ class SecureloginManager {
       return;
     }
 
-    // Get the current uri and convert HTTPS-ify it.
-    $url = str_replace('http://', 'https://', $this->request->getUri());
-    $this->response = new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY);
-
-    // We don't use drupal_goto() here because we want to be able to use the
-    // page cache, but let's pretend that we are.
-    // @TODO investigate if this is still needed
-    \Drupal::moduleHandler()->alter('drupal_goto', $path, $options, $http_response_code);
+    // Get the current uri and convert it to HTTPS.
+    $secure_url = $this->config->get('securelogin.settings')->get('base_url');
+    $url = isset($secure_url) ? $secure_url : str_replace('http://', 'https://', $this->request->getUri());
+    $this->response = new RedirectResponse($url, RedirectResponse::HTTP_MOVED_PERMANENTLY);
 
     // Mimic the standard functions that run at the end of a request.
     $session_manager = \Drupal::service('session_manager');
