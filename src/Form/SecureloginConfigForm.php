@@ -65,11 +65,21 @@ class SecureloginConfigForm extends ConfigFormBase {
       '#type'          => 'fieldset',
       '#title'         => t('Required forms'),
       '#description'   => t('If enabled, the following forms will be submitted to the secure URL. These forms must be secured in order to implement basic secure login functionality.'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="all_forms"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['optional'] = array(
       '#type'          => 'fieldset',
       '#title'         => t('Optional forms'),
       '#description'   => t('Other forms accessible to anonymous users may optionally be secured. If enabled, the following forms will be submitted to the secure URL.'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="all_forms"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $forms['user_login_form'] = array('group' => 'required', 'title' => t('User login form'));
     $forms['user_login_block'] = array('group' => 'required', 'title' => t('User login block form'));
@@ -93,6 +103,11 @@ class SecureloginConfigForm extends ConfigFormBase {
       '#title' => t('Other forms to secure'),
       '#default_value' => $securelogin_other_forms,
       '#description' => t('List the form IDs of any other forms that you want secured, separated by a space. If the form has a base form ID, you must list the base form ID rather than the form ID.'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="all_forms"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['submit'] = array(
       '#type' => 'submit',
